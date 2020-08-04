@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout :: head"></head>
+<body>
+<header th:replace="layout/layout :: header"></header>
+
+    <div class="container py-4">
+        <div class="card bg-light">
+            <div class="card-header" th:text="${title}"></div>
+            <div class="card-body">
+
+               <h4 sec:authorize="hasRole('ROLE_ADMIN')" class="card-title">
+                   <a th:href="@{/form}" class="btn btn-primary btn-xs">Crear cliente</a>
+                   <a th:href="@{'/list'(format=csv)}" class="btn btn-success btn-xs float-right">CSV</a>
+                   <a th:href="@{'/list'(format=xml)}" class="btn btn-outline-success btn-xs float-right mr-2">XML</a>
+                   <a th:href="@{'/list'(format=json)}" class="btn btn-warning btn-xs float-right mr-2">JSON</a>
+               </h4>
+
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <td sec:authorize="hasRole('ROLE_USER')">Id</td>
+                            <td>Name</td>
+                            <td>Surname</td>
+                            <td>Email</td>
+                            <td>Date</td>
+                            <td sec:authorize="hasRole('ROLE_ADMIN')">Create Invoice</td>
+                            <td sec:authorize="hasRole('ROLE_ADMIN')">Edit</td>
+                            <td sec:authorize="hasRole('ROLE_ADMIN')">Delete</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="client: ${clients}">
+                            <td sec:authorize="hasRole('ROLE_USER')"><a class="btn btn-primary btn-xs" th:href="@{/ver/} + ${client.id}" th:text="${client.id}"></a></td>
+                            <td th:text="${client.name}"></td>
+                            <td th:text="${client.surname}"></td>
+                            <td th:text="${client.email}"></td>
+                            <td th:text="${client.createAt}"></td>
+                            <td sec:authorize="hasRole('ROLE_ADMIN')"><a class="btn btn-success btn-xs" th:href="@{'/invoice/form/' + ${client.id}}" th:text="'Create Invoice'"></a></td>
+                            <td sec:authorize="hasRole('ROLE_ADMIN')"><a class="btn btn-primary bt-xs" th:href="@{/form/} + ${client.id}" th:text="'editar'"></a></td>
+                            <td sec:authorize="hasRole('ROLE_ADMIN')"><a class="btn btn-danger bt-xs" th:href="@{/delete/} + ${client.id}" th:text="'delete'" onclick="return confirm('Estas seguro que quieres eliminar?');"></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <nav th:replace="paginator-nav :: paginator"></nav>
+            </div>
+
+        </div>
+    </div>
+
+    <footer th:replace="layout/layout :: footer"></footer>
+</body>
+</html>
